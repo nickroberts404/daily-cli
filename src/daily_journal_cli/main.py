@@ -25,26 +25,34 @@ def get_target_date(date):
     return target_date
 
 
-def collect_entries(date):
+def print_collect_entries_header(date):
     formatted_date = format_date(date)
-    entries = []
     print(
         f"[bold blue]What did you do today [not bold italic]({formatted_date})[/]?[/]"
     )
-    for entry in existing_entries:
+
+
+def print_entry_list(entries):
+    for entry in entries:
         print(f"[bold blue]*[/] {entry}")
-    for entry in receive_entries():
-        entries.append(entry)
-        # TODO Add entries to DB
 
 
-def receive_entries():
+def prompt_user_for_entries():
     while True:
         input = Prompt.ask("")
         if len(input) == 0:
             break
         else:
             yield input
+
+
+def collect_entries(date):
+    entries = []
+    print_collect_entries_header(date)
+    print_entry_list(existing_entries)
+    for entry in prompt_user_for_entries():
+        entries.append(entry)
+        # TODO Add entries to DB
 
 
 def main(date: Annotated[str, typer.Option("--date", "-d")] = None):
