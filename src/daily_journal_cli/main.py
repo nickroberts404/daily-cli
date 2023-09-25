@@ -1,4 +1,4 @@
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from typing_extensions import Annotated
 
 import typer
@@ -19,8 +19,10 @@ def string_to_date(date_string: str) -> date:
     return datetime.strptime(date_string, "%m/%d/%Y").date()
 
 
-def get_target_date(date_string: str or None) -> date:  # IS this a date or datetime
+def get_target_date(date_string: str or None, yesterday: bool) -> date:
     target_date = today
+    if yesterday:
+        target_date -= timedelta(days=1)
     if date_string:
         try:
             target_date = string_to_date(date_string)
@@ -59,11 +61,13 @@ def collect_entries(date: date):
     print_entry_list(existing_entries)
     for entry in prompt_user_for_entries():
         database.insert_entry(entry, date)
-        # TODO Add entries to DB
 
 
-def main(date: Annotated[str, typer.Option("--date", "-d")] = None):
-    target_date = get_target_date(date)
+def main(
+    date: Annotated[str, typer.Option("--date", "-d")] = None,
+    yesterday: Annotated[bool, typer.Option("--yesterday", "-y")] = False,
+):
+    target_date = get_target_date(date, yesterday)
     collect_entries(target_date)
 
 
