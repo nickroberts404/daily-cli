@@ -74,7 +74,7 @@ def journal(
 
 
 @app.callback(invoke_without_command=True)
-def main(
+def default(
     ctx: typer.Context,
     date: Annotated[str, typer.Option("--date", "-d")] = None,
     yesterday: Annotated[bool, typer.Option("--yesterday", "-y")] = False,
