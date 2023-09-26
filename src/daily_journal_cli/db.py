@@ -15,7 +15,7 @@ class Entry:
 
 
 class DB:
-    cx = sqlite3.connect("daily-journal.db")
+    cx = sqlite3.connect("daily-journal.sqlite")
 
     def __init__(self):
         self.createEntriesTable()
