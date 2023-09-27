@@ -161,4 +161,4 @@ cython_debug/
 
 
 .vscode
-daily-journal.db
+daily-journal.sqlite

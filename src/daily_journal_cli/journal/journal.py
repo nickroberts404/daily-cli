@@ -65,6 +65,18 @@ def collect_entries(date: date):
 
 
 @app.command()
+def edit(id: Annotated[int, typer.Argument()]):
+    entry = database.get_entry_by_id(id)
+    edited_content = Prompt.ask("Edit", default=entry.content)
+    database.update_entry_content(id, edited_content)
+
+
+@app.command()
+def delete(id: Annotated[int, typer.Argument()]):
+    database.delete_entry(id)
+
+
+@app.command()
 def journal(
     date: Annotated[str, typer.Option("--date", "-d")] = None,
     yesterday: Annotated[bool, typer.Option("--yesterday", "-y")] = False,

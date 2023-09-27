@@ -49,12 +49,12 @@ class DB:
             rows = cu.fetchall()
         return [Entry(row) for row in rows]
 
-    def get_entry_by_id(self) -> Entry or None:
+    def get_entry_by_id(self, id: int) -> Entry or None:
         with self.cx:
             cu = self.cx.cursor()
-            cu.execute("SELECT * FROM entries;")
-            rows = cu.fetchall()
-        return [Entry(row) for row in rows]
+            cu.execute("SELECT * FROM entries where id = ?;", (id,))
+            row = cu.fetchone()
+        return Entry(row)
 
     def insert_entry(self, content: str, date: date) -> int:
         now = datetime.now()
@@ -68,6 +68,23 @@ class DB:
             cu.execute("SELECT last_insert_rowid();")
             rowid = cu.fetchone()
         return rowid
+
+    def update_entry_content(self, id: int, content: str):
+        now = datetime.now()
+        with self.cx:
+            cu = self.cx.cursor()
+            cu.execute(
+                "UPDATE entries SET content = ?, updated_at = ? WHERE id = ?;",
+                (content, now, id),
+            )
+
+    def delete_entry(self, id: int):
+        with self.cx:
+            cu = self.cx.cursor()
+            cu.execute(
+                "DELETE FROM entries WHERE id = ?;",
+                (id,),
+            )
 
 
 database = DB()
