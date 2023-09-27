@@ -6,10 +6,11 @@ from rich import print
 from rich.prompt import Prompt
 
 from daily_journal_cli.db import DB, Entry
-from daily_journal_cli.cli import app
 
 database = DB()
 today = date.today()
+
+app = typer.Typer()
 
 
 def format_date(date: date) -> str:
@@ -77,7 +78,7 @@ def delete(id: Annotated[int, typer.Argument()]):
 
 
 @app.command()
-def journal(
+def add(
     date: Annotated[str, typer.Option("--date", "-d")] = None,
     yesterday: Annotated[bool, typer.Option("--yesterday", "-y")] = False,
 ):
@@ -93,4 +94,4 @@ def default(
 ):
     if ctx.invoked_subcommand is not None:
         return
-    journal(date=date, yesterday=yesterday)
+    add(date=date, yesterday=yesterday)
