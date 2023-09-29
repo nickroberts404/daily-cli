@@ -63,12 +63,32 @@ def collect_entries(date: date):
         database.insert_entry(entry, date)
 
 
+def split_date_range(date_range: str) -> list[date]:
+    dates = date_range.split("-")
+    if len(dates) != 2:
+        print(
+            "[red bold]Please provide date range in valid format[/] (example: 05/26/1994-06/01/1994)."
+        )
+        raise typer.Exit()
+    return [string_to_date(d) for d in dates]
+
+
+def date_range_by_days_ago(days: int) -> list[date]:
+    start_date = today - timedelta(days=days)
+    return [start_date, today]
+
+
 @app.command()
 def view(
-    date_range: Annotated[str, typer.Option("--range", "-r")] = None,
     last_n_days: Annotated[int, typer.Option("--last")] = 7,
+    date_range: Annotated[str, typer.Option("--range", "-r")] = None,
 ):
-    print("Not yet implemented")
+    if date_range:
+        start, end = split_date_range(date_range)
+    else:
+        start, end = date_range_by_days_ago(last_n_days)
+    # existing_entries = database.get_entries_by_date_range(after, before) TODO implement this
+    print("Not yet implemented: ", start, end)
 
 
 @app.command()
