@@ -1,5 +1,6 @@
 from datetime import datetime, date, timedelta
 from typing_extensions import Annotated
+from collections import defaultdict
 
 import typer
 from rich import print
@@ -88,6 +89,19 @@ def view(
     else:
         start, end = date_range_by_days_ago(last_n_days)
     existing_entries = database.get_entries_by_date_range(start, end)
+    # Group existing_entries by date
+    entries_grouped_by_date = defaultdict(list)
+    for entry in existing_entries:
+        entries_grouped_by_date[entry.date].append(entry)
+    difference_in_days = (end - start).days
+    all_dates = [start + timedelta(days=x) for x in range(difference_in_days)]
+
+    for d in all_dates:
+        print(f'[bold blue]{format_date(d)}[/]{d.strftime("%w")}')
+
+    # List every date in the range
+    # If any entries: list them,
+    # Else: print "no entries"
     print(len(existing_entries))
 
 
