@@ -2,12 +2,15 @@ import sqlite3
 from datetime import date, datetime
 
 
+def db_date_to_date(db_date: str) -> date:
+    return datetime.strptime(db_date, "%Y-%m-%d").date()
+
+
 class Entry:
     def __init__(self, raw_entry):
-        print(raw_entry)
         self.id = raw_entry[0]
         self.content = raw_entry[1]
-        self.date = raw_entry[2]
+        self.date = db_date_to_date(raw_entry[2])
         self.created_at = raw_entry[3]
         self.updated_at = raw_entry[4]
 
@@ -39,6 +42,15 @@ class DB:
         with self.cx:
             cu = self.cx.cursor()
             cu.execute("SELECT * FROM entries WHERE date = ?", (date,))
+            rows = cu.fetchall()
+        return [Entry(row) for row in rows]
+
+    def get_entries_by_date_range(self, start: date, end: date) -> list[Entry]:
+        with self.cx:
+            cu = self.cx.cursor()
+            cu.execute(
+                "SELECT * FROM entries WHERE date >= ? AND date <= ?", (start, end)
+            )
             rows = cu.fetchall()
         return [Entry(row) for row in rows]
 

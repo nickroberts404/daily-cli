@@ -87,8 +87,8 @@ def view(
         start, end = split_date_range(date_range)
     else:
         start, end = date_range_by_days_ago(last_n_days)
-    # existing_entries = database.get_entries_by_date_range(after, before) TODO implement this
-    print("Not yet implemented: ", start, end)
+    existing_entries = database.get_entries_by_date_range(start, end)
+    print(len(existing_entries))
 
 
 @app.command()
