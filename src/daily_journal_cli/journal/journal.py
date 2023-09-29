@@ -5,6 +5,7 @@ from collections import defaultdict
 import typer
 from rich import print
 from rich.prompt import Prompt
+from rich.padding import Padding
 
 from daily_journal_cli.db import DB, Entry
 
@@ -97,12 +98,13 @@ def view(
     all_dates = [start + timedelta(days=x) for x in range(difference_in_days)]
 
     for d in all_dates:
-        print(f'[bold blue]{format_date(d)}[/]{d.strftime("%w")}')
-
-    # List every date in the range
-    # If any entries: list them,
-    # Else: print "no entries"
-    print(len(existing_entries))
+        print(f'[bold blue]{format_date(d)}[/] [italic dim]({d.strftime("%A")})[/]')
+        entries = entries_grouped_by_date[d]
+        if len(entries) > 0:
+            print_entry_list(entries)
+        else:
+            print("[red]No entries[/]")
+        print("")  # Would be cool to print a "rule" here, if we switch to rich.console
 
 
 @app.command()
