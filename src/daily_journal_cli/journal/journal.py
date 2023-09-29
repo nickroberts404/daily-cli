@@ -18,7 +18,11 @@ def format_date(date: date) -> str:
 
 
 def string_to_date(date_string: str) -> date:
-    return datetime.strptime(date_string, "%m/%d/%Y").date()
+    try:
+        return datetime.strptime(date_string, "%m/%d/%Y").date()
+    except:
+        print("[red bold]Please provide date in valid format[/] (example: 05/26/1994).")
+        raise typer.Exit()
 
 
 def get_target_date(date_string: str or None, yesterday: bool) -> date:
@@ -26,13 +30,7 @@ def get_target_date(date_string: str or None, yesterday: bool) -> date:
     if yesterday:
         target_date -= timedelta(days=1)
     if date_string:
-        try:
-            target_date = string_to_date(date_string)
-        except:
-            print(
-                "[red bold]Please provide date in valid format[/] (example: 05/26/1994)."
-            )
-            raise typer.Exit()
+        target_date = string_to_date(date_string)
     return target_date
 
 
@@ -66,6 +64,14 @@ def collect_entries(date: date):
 
 
 @app.command()
+def view(
+    date_range: Annotated[str, typer.Option("--range", "-r")] = None,
+    last_n_days: Annotated[int, typer.Option("--last")] = 7,
+):
+    print("Not yet implemented")
+
+
+@app.command()
 def edit(id: Annotated[int, typer.Argument()]):
     entry = database.get_entry_by_id(id)
     edited_content = Prompt.ask("Edit", default=entry.content)
@@ -77,10 +83,14 @@ def delete(id: Annotated[int, typer.Argument()]):
     database.delete_entry(id)
 
 
+DateOption = Annotated[str, typer.Option("--date", "-d")]
+YesterdayOption = Annotated[bool, typer.Option("--yesterday", "-y")]
+
+
 @app.command()
 def add(
-    date: Annotated[str, typer.Option("--date", "-d")] = None,
-    yesterday: Annotated[bool, typer.Option("--yesterday", "-y")] = False,
+    date: DateOption = None,
+    yesterday: YesterdayOption = False,
 ):
     target_date = get_target_date(date, yesterday)
     collect_entries(target_date)
@@ -89,8 +99,8 @@ def add(
 @app.callback(invoke_without_command=True)
 def default(
     ctx: typer.Context,
-    date: Annotated[str, typer.Option("--date", "-d")] = None,
-    yesterday: Annotated[bool, typer.Option("--yesterday", "-y")] = False,
+    date: DateOption = None,
+    yesterday: YesterdayOption = False,
 ):
     if ctx.invoked_subcommand is not None:
         return
