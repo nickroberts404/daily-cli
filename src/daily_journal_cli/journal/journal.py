@@ -76,7 +76,7 @@ def split_date_range(date_range: str) -> list[date]:
 
 
 def date_range_by_days_ago(days: int) -> list[date]:
-    start_date = today - timedelta(days=days)
+    start_date = today - timedelta(days=days - 1)
     return [start_date, today]
 
 
@@ -94,7 +94,8 @@ def view(
     entries_grouped_by_date = defaultdict(list)
     for entry in existing_entries:
         entries_grouped_by_date[entry.date].append(entry)
-    difference_in_days = (end - start).days
+
+    difference_in_days = (end - start).days + 1
     all_dates = [start + timedelta(days=x) for x in range(difference_in_days)]
 
     for d in all_dates:
