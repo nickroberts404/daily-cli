@@ -16,7 +16,9 @@ app = typer.Typer()
 
 
 def format_date(date: date) -> str:
-    return date.strftime("%b %d, %Y")
+    date_proper = date.strftime("%b %d, %Y")
+    day_of_week = date.strftime("%A")
+    return f"[bold blue]{date_proper}[/] [italic dim]({day_of_week})[/]"
 
 
 def string_to_date(date_string: str) -> date:
@@ -38,9 +40,7 @@ def get_target_date(date_string: str or None, yesterday: bool) -> date:
 
 def print_collect_entries_header(date: date):
     formatted_date = format_date(date)
-    print(
-        f"[bold blue]What did you do today [not bold italic]({formatted_date})[/]?[/]"
-    )
+    print(f":snow_capped_mountain: [bold]What did you do on[/] {formatted_date}?")
 
 
 def print_entry_list(entries: list[Entry]):
@@ -99,7 +99,7 @@ def view(
     all_dates = [start + timedelta(days=x) for x in range(difference_in_days)]
 
     for d in all_dates:
-        print(f'[bold blue]{format_date(d)}[/] [italic dim]({d.strftime("%A")})[/]')
+        print(format_date(d))
         entries = entries_grouped_by_date[d]
         if len(entries) > 0:
             print_entry_list(entries)
