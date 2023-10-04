@@ -28,25 +28,29 @@ def date_range_by_days_ago(days: int) -> list[date]:
     return [start_date, today]
 
 
-@app.command()
-def view(
-    last_n_days: Annotated[int, typer.Option("--last")] = 7,
-    date_range: Annotated[str, typer.Option("--range", "-r")] = None,
-):
+def get_range(date_range: str, last_n_days: int) -> list[date]:
     if date_range:
         start, end = split_date_range(date_range)
     else:
         start, end = date_range_by_days_ago(last_n_days)
+    return [start, end]
+
+
+def get_entries_grouped_by_date(start: date, end: date):
     existing_entries = database.get_entries_by_date_range(start, end)
-    # Group existing_entries by date
     entries_grouped_by_date = defaultdict(list)
     for entry in existing_entries:
         entries_grouped_by_date[entry.date].append(entry)
+    return entries_grouped_by_date
 
+
+def get_list_of_dates(start: date, end: date) -> list[date]:
     difference_in_days = (end - start).days + 1
-    all_dates = [start + timedelta(days=x) for x in range(difference_in_days)]
+    return [start + timedelta(days=x) for x in range(difference_in_days)]
 
-    for d in all_dates:
+
+def print_entries_by_date(entries_grouped_by_date, list_of_dates):
+    for d in list_of_dates:
         print(format_date(d))
         entries = entries_grouped_by_date[d]
         if len(entries) > 0:
@@ -54,3 +58,14 @@ def view(
         else:
             print("[red]No entries[/]")
         print("")  # Would be cool to print a "rule" here, if we switch to rich.console
+
+
+@app.command()
+def view(
+    last_n_days: Annotated[int, typer.Option("--last")] = 7,
+    date_range: Annotated[str, typer.Option("--range", "-r")] = None,
+):
+    start, end = get_range(date_range, last_n_days)
+    entries_grouped_by_date = get_entries_grouped_by_date(start, end)
+    list_of_dates = get_list_of_dates(start, end)
+    print_entries_by_date(entries_grouped_by_date, list_of_dates)
