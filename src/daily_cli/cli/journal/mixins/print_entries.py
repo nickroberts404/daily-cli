@@ -1,5 +1,5 @@
 from rich import print
-from daily_cli.daily.journal.entry import Entry
+from daily.journal.entry import Entry
 
 
 def print_entries(entries: list[Entry]):

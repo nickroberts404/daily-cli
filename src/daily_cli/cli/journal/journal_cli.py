@@ -1,7 +1,7 @@
 from typing_extensions import Annotated
 import typer
 
-from daily_cli.daily import Journal, SqliteJournalDatabase
+from daily import Journal, SqliteJournalDatabase
 from ..cli_plugin import CLIPlugin
 
 # from . import subcommands
