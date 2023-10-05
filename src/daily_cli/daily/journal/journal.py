@@ -17,7 +17,7 @@ class Journal:
     def get_entries_by_date_range(self, start: date, end: date) -> Entry:
         return self.db.get_entries_by_date_range(start, end)
 
-    def create_entry(self, content: str, date: date) -> int:
+    def insert_entry(self, content: str, date: date) -> int:
         return self.db.insert_entry(content, date)
 
     def delete_entry(self, entry_id: int):

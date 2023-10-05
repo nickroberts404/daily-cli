@@ -1,16 +1,11 @@
-from typing_extensions import Annotated
 from collections import defaultdict
 from datetime import date, timedelta
 
 import typer
 from rich import print
 
-from . import app
-from daily_journal_cli.db import database
-from daily_journal_cli.util import format_date, string_to_date
+from daily_cli.util import format_date, string_to_date
 from .print_entries import print_entries
-
-today = date.today()
 
 
 def split_date_range(date_range: str) -> list[date]:
@@ -24,6 +19,7 @@ def split_date_range(date_range: str) -> list[date]:
 
 
 def date_range_by_days_ago(days: int) -> list[date]:
+    today = date.today()
     start_date = today - timedelta(days=days - 1)
     return [start_date, today]
 
@@ -36,11 +32,10 @@ def get_range(date_range: str, last_n_days: int) -> list[date]:
     return [start, end]
 
 
-def get_entries_grouped_by_date(start: date, end: date):
-    existing_entries = database.get_entries_by_date_range(start, end)
+def group_entries_by_date(entries):
     entries_grouped_by_date = defaultdict(list)
-    for entry in existing_entries:
-        entries_grouped_by_date[entry.date].append(entry)
+    for e in entries:
+        entries_grouped_by_date[e.date].append(e)
     return entries_grouped_by_date
 
 
@@ -60,12 +55,14 @@ def print_entries_by_date(entries_grouped_by_date, list_of_dates):
         print("")  # Would be cool to print a "rule" here, if we switch to rich.console
 
 
-@app.command()
-def view(
-    last_n_days: Annotated[int, typer.Option("--last")] = 7,
-    date_range: Annotated[str, typer.Option("--range", "-r")] = None,
-):
-    start, end = get_range(date_range, last_n_days)
-    entries_grouped_by_date = get_entries_grouped_by_date(start, end)
-    list_of_dates = get_list_of_dates(start, end)
-    print_entries_by_date(entries_grouped_by_date, list_of_dates)
+class ViewEntriesMixin:
+    def view_entries(
+        self,
+        last_n_days: int or None,
+        date_range: str or None,
+    ):
+        start, end = get_range(date_range, last_n_days)
+        existing_entries = self.journal.get_entries_by_date_range(start, end)
+        entries_grouped_by_date = group_entries_by_date(existing_entries)
+        list_of_dates = get_list_of_dates(start, end)
+        print_entries_by_date(entries_grouped_by_date, list_of_dates)

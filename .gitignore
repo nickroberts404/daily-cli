@@ -162,4 +162,5 @@ cython_debug/
 
 .vscode
 daily-journal.sqlite
+daily-journal-backup.sqlite
 ideas.txt

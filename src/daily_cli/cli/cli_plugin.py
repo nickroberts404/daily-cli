@@ -6,5 +6,5 @@ class CLIPlugin(ABC):
     name = "plugin"
 
     @abstractmethod
-    def registerCommands(self, parentApp: typer.Typer):
+    def register_commands(self, parentApp: typer.Typer):
         pass

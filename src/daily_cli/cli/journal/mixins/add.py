@@ -3,7 +3,7 @@ from datetime import date, timedelta
 from rich import print
 from rich.prompt import Prompt
 
-from daily_journal_cli.util import format_date, string_to_date
+from daily_cli.util import format_date, string_to_date
 from .print_entries import print_entries
 
 
@@ -30,12 +30,12 @@ def prompt_user_for_entries():
             yield input
 
 
-class AddEntryMixin:
-    def addEntry(self, date_string: str or None, yesterday: bool):
+class InsertEntryMixin:
+    def insert_entry(self, date_string: str or None, yesterday: bool):
         target_date = get_target_date(date_string, yesterday)
-        existing_entries = self.get_entries_by_date(target_date)
+        existing_entries = self.journal.get_entries_by_date(target_date)
         print_prompt(target_date)
         print_entries(existing_entries)
 
         for entry in prompt_user_for_entries():
-            self.insert_entry(entry, date)
+            self.journal.insert_entry(entry, target_date)

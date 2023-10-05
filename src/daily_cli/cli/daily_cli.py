@@ -6,9 +6,9 @@ class DailyCLI:
     app = typer.Typer()
     plugins = []
 
-    def registerPlugins(self, plugins: list[CLIPlugin]):
+    def register_plugins(self, plugins: list[CLIPlugin]):
         for p in plugins:
-            p.registerCommands(self.app)
+            p.register_commands(self.app)
         self.plugins = plugins
 
     def run(self):
