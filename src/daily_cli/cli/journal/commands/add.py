@@ -9,8 +9,6 @@ from ..journal_cli import app, journal
 from daily_cli.util import format_date, string_to_date
 from .print_entries import print_entries
 
-today = date.today()
-
 
 def print_prompt(date: date):
     formatted_date = format_date(date)
@@ -18,7 +16,7 @@ def print_prompt(date: date):
 
 
 def get_target_date(date_string: str or None, yesterday: bool) -> date:
-    target_date = today
+    target_date = date.today()
     if yesterday:
         target_date -= timedelta(days=1)
     if date_string:
