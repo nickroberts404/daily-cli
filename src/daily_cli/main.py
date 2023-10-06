@@ -1,13 +1,12 @@
-from .cli.daily_cli import DailyCLI
-from .cli.journal.journal_cli import setup_journal_plugin
+import typer
+import daily_cli.cli.journal as journal
 
-journal_plugin = setup_journal_plugin("daily-journal.sqlite")
-cli = DailyCLI()
-cli.register_plugins([journal_plugin])
+app = typer.Typer()
+app.add_typer(journal.app, name="journal")
 
 
 def run():
-    cli.run()
+    app()
 
 
 if __name__ == "__main__":

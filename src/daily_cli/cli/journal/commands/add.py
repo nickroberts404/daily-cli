@@ -1,10 +1,15 @@
+from typing_extensions import Annotated
 from datetime import date, timedelta
 
+import typer
 from rich import print
 from rich.prompt import Prompt
 
+from ..journal_cli import app, journal
 from daily_cli.util import format_date, string_to_date
 from .print_entries import print_entries
+
+today = date.today()
 
 
 def print_prompt(date: date):
@@ -13,7 +18,7 @@ def print_prompt(date: date):
 
 
 def get_target_date(date_string: str or None, yesterday: bool) -> date:
-    target_date = date.today()
+    target_date = today
     if yesterday:
         target_date -= timedelta(days=1)
     if date_string:
@@ -30,12 +35,23 @@ def prompt_user_for_entries():
             yield input
 
 
-class InsertEntryMixin:
-    def insert_entry(self, date_string: str or None, yesterday: bool):
-        target_date = get_target_date(date_string, yesterday)
-        existing_entries = self.journal.get_entries_by_date(target_date)
-        print_prompt(target_date)
-        print_entries(existing_entries)
+def print_existing_entries(date: date):
+    existing_entries = journal.get_entries_by_date(date)
+    print_entries(existing_entries)
 
-        for entry in prompt_user_for_entries():
-            self.journal.insert_entry(entry, target_date)
+
+def collect_entries(date: date):
+    for entry in prompt_user_for_entries():
+        journal.insert_entry(entry, date)
+
+
+@app.command()
+def add(
+    date: Annotated[str, typer.Option("--date", "-d")] = None,
+    yesterday: Annotated[bool, typer.Option("--yesterday", "-y")] = False,
+):
+    target_date = get_target_date(date, yesterday)
+
+    print_prompt(target_date)
+    print_existing_entries(target_date)
+    collect_entries(target_date)

@@ -1,9 +1,11 @@
+from typing_extensions import Annotated
 from collections import defaultdict
 from datetime import date, timedelta
 
 import typer
 from rich import print
 
+from ..journal_cli import app, journal
 from daily_cli.util import format_date, string_to_date
 from .print_entries import print_entries
 
@@ -55,14 +57,13 @@ def print_entries_by_date(entries_grouped_by_date, list_of_dates):
         print("")  # Would be cool to print a "rule" here, if we switch to rich.console
 
 
-class ViewEntriesMixin:
-    def view_entries(
-        self,
-        last_n_days: int or None,
-        date_range: str or None,
-    ):
-        start, end = get_range(date_range, last_n_days)
-        existing_entries = self.journal.get_entries_by_date_range(start, end)
-        entries_grouped_by_date = group_entries_by_date(existing_entries)
-        list_of_dates = get_list_of_dates(start, end)
-        print_entries_by_date(entries_grouped_by_date, list_of_dates)
+@app.command()
+def view(
+    last_n_days: Annotated[int, typer.Option("--last")] = 7,
+    date_range: Annotated[str, typer.Option("--range", "-r")] = None,
+):
+    start, end = get_range(date_range, last_n_days)
+    existing_entries = journal.get_entries_by_date_range(start, end)
+    entries_grouped_by_date = group_entries_by_date(existing_entries)
+    list_of_dates = get_list_of_dates(start, end)
+    print_entries_by_date(entries_grouped_by_date, list_of_dates)
