@@ -26,7 +26,7 @@ class SqliteJournalDatabase(JournalDatabase, SqliteDatabase):
     def get_entries_by_date(self, date: date) -> list[Entry]:
         with self.cx:
             cu = self.cx.cursor()
-            cu.execute("SELECT * FROM entries WHERE date = ?", (date,))
+            cu.execute("SELECT id, content, date FROM entries WHERE date = ?", (date,))
             rows = cu.fetchall()
         return [rawToEntry(row) for row in rows]
 
@@ -34,7 +34,8 @@ class SqliteJournalDatabase(JournalDatabase, SqliteDatabase):
         with self.cx:
             cu = self.cx.cursor()
             cu.execute(
-                "SELECT * FROM entries WHERE date >= ? AND date <= ?", (start, end)
+                "SELECT id, content, date FROM entries WHERE date >= ? AND date <= ?",
+                (start, end),
             )
             rows = cu.fetchall()
         return [rawToEntry(row) for row in rows]
@@ -42,14 +43,14 @@ class SqliteJournalDatabase(JournalDatabase, SqliteDatabase):
     def get_all_entries(self) -> list[Entry]:
         with self.cx:
             cu = self.cx.cursor()
-            cu.execute("SELECT * FROM entries;")
+            cu.execute("SELECT id, content, date FROM entries;")
             rows = cu.fetchall()
         return [rawToEntry(row) for row in rows]
 
     def get_entry_by_id(self, id: int) -> Entry or None:
         with self.cx:
             cu = self.cx.cursor()
-            cu.execute("SELECT * FROM entries where id = ?;", (id,))
+            cu.execute("SELECT id, content, date FROM entries where id = ?;", (id,))
             row = cu.fetchone()
         return rawToEntry(row)
 
@@ -85,11 +86,4 @@ class SqliteJournalDatabase(JournalDatabase, SqliteDatabase):
 
 
 def rawToEntry(row):
-    attributes = {
-        "id": row[0],
-        "content": row[1],
-        "date": sqlite_date_to_date(row[2]),
-        "created_at": row[3],
-        "updated_at": row[4],
-    }
-    return Entry(attributes)
+    return Entry(id=row[0], content=row[1], date=sqlite_date_to_date(row[2]))

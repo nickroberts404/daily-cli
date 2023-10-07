@@ -17,7 +17,3 @@ class SqliteDatabase(ABC):
 
 def sqlite_date_to_date(db_date: str) -> date:
     return datetime.strptime(db_date, "%Y-%m-%d").date()
-
-
-def sqlite_datetime_to_datetime(db_date: str) -> date:
-    return datetime.strptime(db_date, "%Y-%m-%d").date()

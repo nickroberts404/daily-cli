@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import date
 
 
 class Entry:
@@ -7,11 +7,7 @@ class Entry:
         id: int,
         content: str,
         date: date,
-        created_at: datetime,
-        updated_at: datetime,
     ):
         self.id = id
         self.content = content
         self.date = date
-        self.created_at = created_at
-        self.updated_at = updated_at
