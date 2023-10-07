@@ -1,9 +1,8 @@
 import typer
-from daily_cli.cli import journal, habits
+from daily_cli.cli import journal
 
 app = typer.Typer()
 app.add_typer(journal.app, name="journal")
-app.add_typer(habits.app, name="habits")
 
 
 def run():
