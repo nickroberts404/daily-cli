@@ -1,2 +1,2 @@
 from .journal.journal import Journal
-from .journal.sqlite_db import SqliteJournalDatabase
+from .journal.db.sqlite_db import SqliteJournalDatabase

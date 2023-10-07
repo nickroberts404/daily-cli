@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from datetime import date, datetime
 
 import sqlite3
 
@@ -12,3 +13,11 @@ class SqliteDatabase(ABC):
     @abstractmethod
     def createTables(self):
         pass
+
+
+def sqlite_date_to_date(db_date: str) -> date:
+    return datetime.strptime(db_date, "%Y-%m-%d").date()
+
+
+def sqlite_datetime_to_datetime(db_date: str) -> date:
+    return datetime.strptime(db_date, "%Y-%m-%d").date()

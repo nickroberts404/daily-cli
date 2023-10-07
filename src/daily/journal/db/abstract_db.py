@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from .entry import Entry
+from ..entry import Entry
 from datetime import date
 
 

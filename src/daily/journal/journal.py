@@ -1,7 +1,7 @@
 from datetime import date
 
 from .entry import Entry
-from .db import JournalDatabase
+from .db.abstract_db import JournalDatabase
 
 
 class Journal:

@@ -1,8 +1,8 @@
 from datetime import date, datetime
 
-from .entry import Entry
-from .db import JournalDatabase
-from ..databases.sqlite_database import SqliteDatabase
+from ..entry import Entry
+from .abstract_db import JournalDatabase
+from daily.databases.sqlite import SqliteDatabase, sqlite_date_to_date
 
 
 class SqliteJournalDatabase(JournalDatabase, SqliteDatabase):
@@ -28,7 +28,7 @@ class SqliteJournalDatabase(JournalDatabase, SqliteDatabase):
             cu = self.cx.cursor()
             cu.execute("SELECT * FROM entries WHERE date = ?", (date,))
             rows = cu.fetchall()
-        return [Entry(row) for row in rows]
+        return [rawToEntry(row) for row in rows]
 
     def get_entries_by_date_range(self, start: date, end: date) -> list[Entry]:
         with self.cx:
@@ -37,21 +37,21 @@ class SqliteJournalDatabase(JournalDatabase, SqliteDatabase):
                 "SELECT * FROM entries WHERE date >= ? AND date <= ?", (start, end)
             )
             rows = cu.fetchall()
-        return [Entry(row) for row in rows]
+        return [rawToEntry(row) for row in rows]
 
     def get_all_entries(self) -> list[Entry]:
         with self.cx:
             cu = self.cx.cursor()
             cu.execute("SELECT * FROM entries;")
             rows = cu.fetchall()
-        return [Entry(row) for row in rows]
+        return [rawToEntry(row) for row in rows]
 
     def get_entry_by_id(self, id: int) -> Entry or None:
         with self.cx:
             cu = self.cx.cursor()
             cu.execute("SELECT * FROM entries where id = ?;", (id,))
             row = cu.fetchone()
-        return Entry(row)
+        return rawToEntry(row)
 
     def insert_entry(self, content: str, date: date) -> int:
         now = datetime.now()
@@ -82,3 +82,14 @@ class SqliteJournalDatabase(JournalDatabase, SqliteDatabase):
                 "DELETE FROM entries WHERE id = ?;",
                 (id,),
             )
+
+
+def rawToEntry(row):
+    attributes = {
+        "id": row[0],
+        "content": row[1],
+        "date": sqlite_date_to_date(row[2]),
+        "created_at": row[3],
+        "updated_at": row[4],
+    }
+    return Entry(attributes)
