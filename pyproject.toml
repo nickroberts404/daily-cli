@@ -1,10 +1,15 @@
 [tool.poetry]
 name = "daily-cli"
 version = "0.1.0"
-description = ""
+description = "A simple journaling CLI"
+repository="https://github.com/nickroberts404/daily-cli"
 authors = ["Nick Roberts <nickroberts404@gmail.com>"]
 license = "MIT"
 readme = "README.md"
+packages = [
+    { include = "daily", from = "src" },
+    { include = "daily_cli", from = "src" },
+]
 
 [tool.poetry.dependencies]
 python = "^3.11"
@@ -13,7 +18,6 @@ typer = {extras = ["all"], version = "^0.9.0"}
 
 [tool.poetry.scripts]
 daily = "daily_cli.main:run"
-
 
 
 [build-system]
