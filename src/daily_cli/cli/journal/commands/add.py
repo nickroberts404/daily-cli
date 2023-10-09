@@ -12,7 +12,17 @@ from .print_entries import print_entries
 
 def print_prompt(date: date):
     formatted_date = format_date(date)
-    print(f":snow_capped_mountain: [bold]What did you do on[/] {formatted_date}?")
+    isToday = date == date.today()
+    isYesterday = date == date.today() - timedelta(days=1)
+    message = f":snow_capped_mountain: [bold]What did you do "
+    if isToday:
+        message += "today"
+    elif isYesterday:
+        message += "yesterday"
+    else:
+        message += "on"
+    message += f"[/] {formatted_date}?"
+    print(message)
 
 
 def get_target_date(date_string: str or None, yesterday: bool) -> date:
@@ -53,3 +63,12 @@ def add(
     print_prompt(target_date)
     print_existing_entries(target_date)
     collect_entries(target_date)
+
+
+# @app.callback(invoke_without_command=True)
+# def add(ctx):
+#     print(cls)
+#     if cls.subcommand_called:
+#         pass
+#     else:
+#         add()
