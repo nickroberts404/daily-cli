@@ -65,10 +65,9 @@ def add(
     collect_entries(target_date)
 
 
-# @app.callback(invoke_without_command=True)
-# def add(ctx):
-#     print(cls)
-#     if cls.subcommand_called:
-#         pass
-#     else:
-#         add()
+@app.callback(invoke_without_command=True)
+def default(ctx: typer.Context):
+    if ctx.invoked_subcommand is not None:
+        return
+    else:
+        add()
