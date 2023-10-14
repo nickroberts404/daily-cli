@@ -1,6 +1,7 @@
 from datetime import datetime, date
 
 import typer
+from rich import print
 
 
 def format_date(date: date) -> str:
